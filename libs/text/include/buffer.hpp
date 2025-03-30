@@ -16,7 +16,7 @@ namespace text
         {
             auto itor = lines.begin();
             itor += index;
-            
+
             lines.insert(itor, line);
         }
 
@@ -33,12 +33,50 @@ namespace text
             lines.erase(itor);
         }
 
-        void InsertText(int line, int offset, const std::string & additional_text) 
+        void DeleteToLineEnd(int line = 0, int offset = 0)
+        {
+            auto itor = lines.begin();
+            itor += line;
+
+            int length = (*itor).length();
+            std::string new_shorter_string;
+
+            if (length > offset)
+            {
+                new_shorter_string = (*itor).substr(0, offset);
+                (*itor) = new_shorter_string;
+            }
+        }
+
+        void DeleteToLineStart(int line = 0, int offset = 0)
+        {
+            auto itor = lines.begin();
+            itor += line;
+
+            int length = (*itor).length();
+            std::string new_shorter_string;
+
+            if ((offset > 0) && (length > offset))
+            {
+                new_shorter_string = (*itor).substr(offset, length-offset);
+                (*itor) = new_shorter_string;   
+            }
+        }
+
+        void InsertText(int line, int offset, const std::string &additional_text)
         {
             auto itor = lines.begin();
             itor += line;
 
             (*itor).insert(offset, additional_text);
+        }
+
+        void DeleteText(int line, int offset1, int offset2)
+        {
+            auto itor = lines.begin();
+            itor += line;
+
+            // WORKING HERE
         }
 
         void Dump()

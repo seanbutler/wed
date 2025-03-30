@@ -157,6 +157,62 @@ int lib_text_buffer_line_insert_text()
     return 0;
 }
 
+
+
+int lib_text_buffer_delete_to_line_end()
+{
+    text::LineBuffer line_buffer;
+
+    std::string demo_string1 = "The first line appended";
+    std::string demo_string2 = "The second line appended";
+    std::string demo_string3 = "The third line appended";
+
+    line_buffer.AppendLine(demo_string1);
+    line_buffer.AppendLine(demo_string2);
+    line_buffer.AppendLine(demo_string3);
+
+    std::string demo_goal = "The second";
+
+    line_buffer.DeleteToLineEnd(1, 10);
+
+    line_buffer.Dump();
+
+    if (line_buffer.lines[1].compare(demo_goal) != 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+
+int lib_text_buffer_delete_to_line_start()
+{
+    text::LineBuffer line_buffer;
+
+    std::string demo_string1 = "The first line appended";
+    std::string demo_string2 = "The second line appended";
+    std::string demo_string3 = "The third line appended";
+
+    line_buffer.AppendLine(demo_string1);
+    line_buffer.AppendLine(demo_string2);
+    line_buffer.AppendLine(demo_string3);
+
+    std::string demo_goal = "XXX";
+
+    line_buffer.DeleteToLineStart(1, 16);
+
+    line_buffer.Dump();
+
+    if (line_buffer.lines[1].compare(demo_goal) != 0)
+    {
+        return 1;
+    }
+
+    return 0;
+}
+
+
 int main(int argc, char **argv)
 {
     if (argc == 1)
@@ -190,6 +246,14 @@ int main(int argc, char **argv)
         else if ((strcmp(argv[1], "6") == 0))
         {
             return lib_text_buffer_line_insert_text();
+        }
+        else if ((strcmp(argv[1], "7") == 0))
+        {
+            return lib_text_buffer_delete_to_line_end();
+        }
+        else if ((strcmp(argv[1], "8") == 0))
+        {
+            return lib_text_buffer_delete_to_line_start();
         }
         else
         {

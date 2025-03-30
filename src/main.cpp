@@ -13,6 +13,9 @@ int main(int argc, char **argv)
 
     line_buffer.InsertLine(2, "First Line Inserted");
 
+    line_buffer.Dump();
+
+    line_buffer.InsertText(1, 7, "Some Text Inserted ");
 
     line_buffer.Dump();
 }
