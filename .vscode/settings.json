@@ -61,6 +61,11 @@
         "ios": "cpp",
         "locale": "cpp",
         "print": "cpp",
-        "queue": "cpp"
+        "queue": "cpp",
+        "iomanip": "cpp",
+        "chrono": "cpp",
+        "deque": "cpp",
+        "forward_list": "cpp",
+        "span": "cpp"
     }
 }

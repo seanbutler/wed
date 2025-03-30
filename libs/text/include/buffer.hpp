@@ -1,8 +1,9 @@
 #pragma once
 
+#include <iostream>
+
 #include <vector>
 #include <string>
-#include <iostream>
 
 namespace text
 {
@@ -15,6 +16,7 @@ namespace text
         {
             auto itor = lines.begin();
             itor += index;
+            
             lines.insert(itor, line);
         }
 
@@ -27,7 +29,16 @@ namespace text
         {
             auto itor = lines.begin();
             itor += index;
+
             lines.erase(itor);
+        }
+
+        void InsertText(int line, int offset, const std::string & additional_text) 
+        {
+            auto itor = lines.begin();
+            itor += line;
+
+            (*itor).insert(offset, additional_text);
         }
 
         void Dump()

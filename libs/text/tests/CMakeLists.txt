@@ -32,5 +32,6 @@ add_test( NAME lib_text_buffer_thrice_appended_size COMMAND test_lib_text_buffer
 add_test( NAME lib_text_buffer_thrice_appended_content COMMAND test_lib_text_buffer 3 )
 add_test( NAME lib_text_buffer_append_insert_size COMMAND test_lib_text_buffer 4 )
 add_test( NAME lib_text_buffer_append_insert_contents COMMAND test_lib_text_buffer 5 )
+add_test( NAME lib_text_buffer_line_insert_text COMMAND test_lib_text_buffer 6 )
 
 

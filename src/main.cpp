@@ -8,7 +8,9 @@ int main(int argc, char **argv)
     line_buffer.AppendLine("First Line Appended");
     line_buffer.AppendLine("Second Line Appended");
     line_buffer.AppendLine("Third Line Appended");
-    
+
+    line_buffer.Dump();
+
     line_buffer.InsertLine(2, "First Line Inserted");
 
 
