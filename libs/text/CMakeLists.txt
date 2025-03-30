@@ -19,10 +19,8 @@ add_library(lib_text ${LIB_SOURCES})
 
 target_include_directories(lib_text PUBLIC ${CMAKE_SOURCE_DIR}/include)
 
-
 #
-# enable testing for the library
+# visit subdir for testing for the library
 #
 
-enable_testing()
 add_subdirectory(tests)
