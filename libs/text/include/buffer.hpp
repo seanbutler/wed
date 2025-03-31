@@ -86,5 +86,16 @@ namespace text
                 std::cout << L << std::endl;
             }
         }
+
+
+        std::string ToString()
+        {
+            std::string local;
+            for (auto L : lines)
+            {
+                local += L + "\n";
+            }
+            return local;
+        }        
     };
 }
