@@ -14,15 +14,27 @@ int main(int argc, char **argv)
     line_buffer.InsertText(1, 7, "Some Text Inserted ");
 
     initscr();
+    cbreak();
+    keypad(stdscr, TRUE);
+    noecho();
+
+    int row, col;
+    getmaxyx(stdscr, row, col);
 
     printw("%s", line_buffer.ToString().c_str());
+
+    int ch;
+    while ((ch = getch()) != KEY_F(1))
+    {
+        switch(ch) {
+            
+        }
+    }
 
     refresh();
 
     getch();
-
     endwin();
 
-
+    return 0;
 }
-
