@@ -4,7 +4,6 @@
 
 set(LIB_SOURCES
     buffer.cpp
-    ops.cpp
 )
 
 #

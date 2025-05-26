@@ -8,13 +8,13 @@ enable_testing()
 
 # Compile lib_text_ops Test Executables
 
-add_executable(test_lib_text_ops lib_text_ops.cpp )
-target_link_libraries(test_lib_text_ops PRIVATE lib_text)
+# add_executable(test_lib_text_ops lib_text_ops.cpp )
+# target_link_libraries(test_lib_text_ops PRIVATE lib_text)
 
 
 # Register lib_text_ops tests with CTest
 
-add_test( NAME lib_text_ops COMMAND test_lib_text_ops )
+# add_test( NAME lib_text_ops COMMAND test_lib_text_ops )
 
 
 

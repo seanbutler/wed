@@ -79,6 +79,14 @@ namespace text
             // WORKING HERE
         }
 
+        int GetLineLength(int line) {
+            auto itor = lines.begin();
+            itor += line;
+
+            return itor->length();
+        }
+
+
         void Dump()
         {
             for (auto L : lines)

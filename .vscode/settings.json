@@ -66,6 +66,8 @@
         "chrono": "cpp",
         "deque": "cpp",
         "forward_list": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "iostream": "cpp",
+        "istream": "cpp"
     }
 }
