@@ -17,7 +17,8 @@ int main(int argc, char **argv)
 
     initscr();
 
-    raw();                // we dont want to buffer until carriage return, we want keypresses immediatly
+    // raw();                // we dont want to buffer until carriage return, we want keypresses immediatly
+    cbreak();
     keypad(stdscr, TRUE); // needed for function keys and arrow keys
     noecho();             // we want to be interactive so let the programe handle what keypresses become text and what are commands
 
@@ -30,74 +31,109 @@ int main(int argc, char **argv)
 
     printw("%s", my_line_buffer.ToString().c_str());
 
-    int ch;
-    while ((ch = getch()) != 27)
+    enum EditMode
     {
-        getyx(stdscr, editor.cursor_y, editor.cursor_x);
-            /* get the current curser position */
+        MODE_EDIT,
+        MODE_COMMAND
+    };
+    enum EditMode edit_mode = MODE_EDIT;
 
-        switch (ch)
+    bool running = true;
+    while (running == true)
+    {
+
+        int ch;
+        ch = getch();
+
+        switch (edit_mode)
         {
-        case KEY_UP:
-                editor.MoveUp();
+        case MODE_EDIT:
+            if (ch == 27)
+                edit_mode = MODE_COMMAND;
             break;
 
-        case KEY_DOWN:
-                editor.MoveDown();
-            break;
-
-        case KEY_LEFT:
-                editor.MoveLeft();
-            break;
-
-        case KEY_RIGHT:
-                editor.MoveRight();
-            break;
-
-        case KEY_HOME:
-                editor.MoveToLineStart();
-            break;
-
-        case KEY_END:
-                editor.MoveToLineEnd();
-            break;
-
-        case KEY_PPAGE:
-                // editor.MoveToLineStart();
-            break;
-
-        case KEY_NPAGE:
-                // editor.MoveToLineEnd();
-            break;
-
-        case 10:
-            editor.SplitLine();
-            break;
-
-
-        default:
-                editor.InsertText(std::string(1, ch));
-                editor.MoveRight();
+        case MODE_COMMAND:
+            if (ch == 27)
+                edit_mode = MODE_EDIT;
             break;
         }
 
-        attroff(A_REVERSE|A_BLINK);			/* JUST IN CASE WE SWITCHED IT ON A PREVIOUS LOOP */
+        switch (edit_mode)
+        {
+        case MODE_EDIT:
+
+            getyx(stdscr, editor.cursor_y, editor.cursor_x);
+            /* get the current curser position */
+
+            switch (ch)
+            {
+            case KEY_F(12):
+                running = false;
+                break;
+
+            case KEY_UP:
+                editor.MoveUp();
+                break;
+
+            case KEY_DOWN:
+                editor.MoveDown();
+                break;
+
+            case KEY_LEFT:
+                editor.MoveLeft();
+                break;
+
+            case KEY_RIGHT:
+                editor.MoveRight();
+                break;
+
+            case KEY_HOME:
+                editor.MoveToLineStart();
+                break;
+
+            case KEY_END:
+                editor.MoveToLineEnd();
+                break;
+
+            case KEY_PPAGE:
+                // editor.MoveToLineStart();
+                break;
+
+            case KEY_NPAGE:
+                // editor.MoveToLineEnd();
+                break;
+
+            // case 10:
+            case KEY_ENTER:
+                editor.SplitLine();
+                break;
+
+            default:
+                editor.InsertText(std::string(1, ch));
+                editor.MoveRight();
+                break;
+            }
+
+
+            break;
+        }
+
+        attroff(A_REVERSE | A_BLINK); /* JUST IN CASE WE SWITCHED IT ON A PREVIOUS LOOP */
         move(0, 0);
         printw("%s", my_line_buffer.ToString().c_str());
 
         move(editor.cursor_y, editor.cursor_x);
-        attron(A_REVERSE|A_BLINK);			/* cut bold on */
+        attron(A_REVERSE | A_BLINK); /* cut bold on */
 
-        attroff(A_REVERSE|A_BLINK);			/* JUST IN CASE WE SWITCHED IT ON A PREVIOUS LOOP */
+        attroff(A_REVERSE | A_BLINK); /* JUST IN CASE WE SWITCHED IT ON A PREVIOUS LOOP */
         // move(0, 0);
 
         // refresh();
-        // move(screen_rows-1, 2);
+        // move(screen_rows - 1, 2);
         // printw(" %d %d ", screen_y, screen_x);
 
         refresh();
     }
-
     endwin();
 
     fprintf(stdout, "%s", my_line_buffer.ToString().c_str());
