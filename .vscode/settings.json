@@ -68,6 +68,7 @@
         "forward_list": "cpp",
         "span": "cpp",
         "iostream": "cpp",
-        "istream": "cpp"
+        "istream": "cpp",
+        "charconv": "cpp"
     }
 }

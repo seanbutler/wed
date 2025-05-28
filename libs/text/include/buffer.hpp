@@ -4,6 +4,10 @@
 
 #include <vector>
 #include <string>
+#include <fstream>
+#include <iostream>
+
+#include <assert.h>
 
 namespace text
 {
@@ -58,8 +62,8 @@ namespace text
 
             if ((offset > 0) && (length > offset))
             {
-                new_shorter_string = (*itor).substr(offset, length-offset);
-                (*itor) = new_shorter_string;   
+                new_shorter_string = (*itor).substr(offset, length - offset);
+                (*itor) = new_shorter_string;
             }
         }
 
@@ -79,13 +83,13 @@ namespace text
             // WORKING HERE
         }
 
-        int GetLineLength(int line) {
+        int GetLineLength(int line)
+        {
             auto itor = lines.begin();
             itor += line;
 
             return itor->length();
         }
-
 
         void Dump()
         {
@@ -95,7 +99,6 @@ namespace text
             }
         }
 
-
         std::string ToString()
         {
             std::string local;
@@ -104,6 +107,32 @@ namespace text
                 local += L + "\n";
             }
             return local;
-        }        
+        }
+
+        void FromString(std::string contents)
+        {
+            assert(0);
+        }
+
+        void ToFile(std::string filename)
+        {
+            std::ofstream outfile(filename);
+            outfile << this->ToString();
+            outfile.close();
+        }
+
+        void FromFile(std::string filename)
+        {
+            std::ifstream file(filename);
+            if (file.is_open())
+            {
+                std::string line;
+                while (std::getline(file, line))
+                {
+                    AppendLine(line);                    
+                }
+                file.close();
+            }
+        }
     };
 }

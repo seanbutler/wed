@@ -3,33 +3,39 @@
 #include <string>
 
 #include <ncurses.h>
+#include <cctype>
+
+#define KEY_ESC 27
 
 int main(int argc, char **argv)
 {
     text::LineBuffer my_line_buffer;
     Editor editor(my_line_buffer);
 
-    my_line_buffer.AppendLine("First Line Appended");
-    my_line_buffer.AppendLine("Second Line Appended");
-    my_line_buffer.AppendLine("Third Line Appended");
-    my_line_buffer.InsertLine(2, "First Line Inserted");
-    my_line_buffer.InsertText(1, 7, "Some Text Inserted ");
+    std::string filename("README.md");
+
+    if (argc == 2)
+    {
+        filename = argv[1];
+    }
+
+    my_line_buffer.FromFile(filename);
 
     initscr();
 
-    // raw();                // we dont want to buffer until carriage return, we want keypresses immediatly
-    cbreak();
+    raw();                // we dont want to buffer until carriage return, we want keypresses immediatly
+    // cbreak();
+
     keypad(stdscr, TRUE); // needed for function keys and arrow keys
     noecho();             // we want to be interactive so let the programe handle what keypresses become text and what are commands
 
     int screen_cols, screen_rows;
     getmaxyx(stdscr, screen_rows, screen_cols);
 
-    int screen_x, screen_y;
     int buffer_x, buffer_y;
     int cursor_x, cursor_y;
 
-    printw("%s", my_line_buffer.ToString().c_str());
+    // printw("%s", my_line_buffer.ToString().c_str());
 
     enum EditMode
     {
@@ -48,12 +54,12 @@ int main(int argc, char **argv)
         switch (edit_mode)
         {
         case MODE_EDIT:
-            if (ch == 27)
+            if (ch == KEY_ESC)
                 edit_mode = MODE_COMMAND;
             break;
 
         case MODE_COMMAND:
-            if (ch == 27)
+            if (ch == KEY_ESC)
                 edit_mode = MODE_EDIT;
             break;
         }
@@ -103,40 +109,54 @@ int main(int argc, char **argv)
                 // editor.MoveToLineEnd();
                 break;
 
-            // case 10:
             case KEY_ENTER:
                 editor.SplitLine();
                 break;
 
             default:
-                editor.InsertText(std::string(1, ch));
-                editor.MoveRight();
+                if (std::isprint(ch))
+                {
+                    editor.InsertText(std::string(1, ch));
+                    editor.MoveRight();
+                }
                 break;
             }
-
 
             break;
         }
 
-        attroff(A_REVERSE | A_BLINK); /* JUST IN CASE WE SWITCHED IT ON A PREVIOUS LOOP */
+#if 1
+        move(screen_rows - 1, 0);
+        attron(A_REVERSE);
+
+        std::string status_line_text = "[" + std::to_string(editor.cursor_y) + " " + std::to_string(editor.cursor_x) + "]";
+
+        int pad_size = screen_cols - status_line_text.length();
+        std::string status_line = status_line_text + std::string(pad_size, ' ');
+
+        printw("%s", status_line.c_str());
+        attroff(A_REVERSE);
+#endif
+
+
+        attroff(A_REVERSE | A_BLINK);
         move(0, 0);
+
+        // HERE - adjust this so we only print out a screen's worth of lines
+
         printw("%s", my_line_buffer.ToString().c_str());
 
+        attron(A_REVERSE | A_BLINK);
         move(editor.cursor_y, editor.cursor_x);
-        attron(A_REVERSE | A_BLINK); /* cut bold on */
+        attroff(A_REVERSE | A_BLINK);
 
-        attroff(A_REVERSE | A_BLINK); /* JUST IN CASE WE SWITCHED IT ON A PREVIOUS LOOP */
-        // move(0, 0);
 
-        // refresh();
-        // move(screen_rows - 1, 2);
-        // printw(" %d %d ", screen_y, screen_x);
 
         refresh();
     }
     endwin();
 
-    fprintf(stdout, "%s", my_line_buffer.ToString().c_str());
+    std::cout << my_line_buffer.ToString();
 
     return 0;
 }
