@@ -23,8 +23,9 @@ int main(int argc, char **argv)
 
     initscr();
 
-    raw();                // we dont want to buffer until carriage return, we want keypresses immediatly
-    // cbreak();
+    // nl();
+    // raw(); 
+    cbreak();
 
     keypad(stdscr, TRUE); // needed for function keys and arrow keys
     noecho();             // we want to be interactive so let the programe handle what keypresses become text and what are commands
@@ -66,6 +67,7 @@ int main(int argc, char **argv)
 
         switch (edit_mode)
         {
+
         case MODE_EDIT:
 
             getyx(stdscr, editor.cursor_y, editor.cursor_x);
@@ -102,15 +104,33 @@ int main(int argc, char **argv)
                 break;
 
             case KEY_PPAGE:
-                // editor.MoveToLineStart();
+                editor.PreviousPage();
                 break;
 
             case KEY_NPAGE:
-                // editor.MoveToLineEnd();
+                editor.NextPage();
                 break;
 
+            case '\n':
+            case '\r':
             case KEY_ENTER:
                 editor.SplitLine();
+                break;
+
+            case KEY_BACKSPACE:
+                editor.Backspace();
+                break;
+
+            case KEY_IC:
+                // editor.Insert();
+                break;
+
+            case KEY_DC:
+                editor.Delete();
+                break;
+
+            case KEY_RESIZE:
+                getmaxyx(stdscr, screen_rows, screen_cols);
                 break;
 
             default:
@@ -125,26 +145,50 @@ int main(int argc, char **argv)
             break;
         }
 
-#if 1
+
+        clear();
+
+
+        //
+        // STATUS BAR AT THE BOTTOM OF THE SCREEN
+        //
+
         move(screen_rows - 1, 0);
         attron(A_REVERSE);
 
-        std::string status_line_text = "[" + std::to_string(editor.cursor_y) + " " + std::to_string(editor.cursor_x) + "]";
+        std::string status_line_text = "";
+
+        if (edit_mode == MODE_EDIT)
+            status_line_text += " E ";
+        else
+            status_line_text += " C ";
+
+        status_line_text += " " + std::to_string(editor.cursor_y) + " " + std::to_string(editor.cursor_x);
+        status_line_text += " / " + std::to_string(my_line_buffer.lines.size());
+        status_line_text += " / " + std::to_string(screen_rows) + " " + std::to_string(screen_cols);
+        status_line_text += " / " + filename;
 
         int pad_size = screen_cols - status_line_text.length();
         std::string status_line = status_line_text + std::string(pad_size, ' ');
 
         printw("%s", status_line.c_str());
         attroff(A_REVERSE);
-#endif
 
+
+
+
+        //
+        // THE ACTUAL TEXT OF THE EDITOR AND CURSOR
+        //
 
         attroff(A_REVERSE | A_BLINK);
         move(0, 0);
 
-        // HERE - adjust this so we only print out a screen's worth of lines
-
-        printw("%s", my_line_buffer.ToString().c_str());
+        int y = 0;
+        for (auto L : my_line_buffer.lines)
+        {
+            mvaddnstr(y++, 0, L.c_str(), screen_cols);
+        }
 
         attron(A_REVERSE | A_BLINK);
         move(editor.cursor_y, editor.cursor_x);

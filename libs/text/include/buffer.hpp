@@ -16,7 +16,7 @@ namespace text
     public:
         std::vector<std::string> lines;
 
-        void InsertLine(int index = 0, const std::string &line = "")
+        void InsertLine(int index = 0, const std::string &line = "BLANK LINE")
         {
             auto itor = lines.begin();
             itor += index;
@@ -67,6 +67,7 @@ namespace text
             }
         }
 
+
         void InsertText(int line, int offset, const std::string &additional_text)
         {
             auto itor = lines.begin();
@@ -75,12 +76,12 @@ namespace text
             (*itor).insert(offset, additional_text);
         }
 
-        void DeleteText(int line, int offset1, int offset2)
+        void DeleteText(int line, int offset, int length)
         {
             auto itor = lines.begin();
             itor += line;
 
-            // WORKING HERE
+            (*itor).erase(offset, length);
         }
 
         int GetLineLength(int line)
