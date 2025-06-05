@@ -21,22 +21,23 @@ int main(int argc, char **argv)
 
     my_line_buffer.FromFile(filename);
 
-    initscr();
 
-    // nl();
-    // raw(); 
-    cbreak();
+	if (initscr() == NULL)  exit(1);
+	if (has_colors())       start_color();
+
+
+    raw(); 
+    nonl();
+    noecho();             // we want to be interactive so let the programe handle what keypresses become text and what are commands
+    // cbreak();
 
     keypad(stdscr, TRUE); // needed for function keys and arrow keys
-    noecho();             // we want to be interactive so let the programe handle what keypresses become text and what are commands
 
     int screen_cols, screen_rows;
     getmaxyx(stdscr, screen_rows, screen_cols);
 
     int buffer_x, buffer_y;
     int cursor_x, cursor_y;
-
-    // printw("%s", my_line_buffer.ToString().c_str());
 
     enum EditMode
     {
@@ -48,22 +49,21 @@ int main(int argc, char **argv)
     bool running = true;
     while (running == true)
     {
-
         int ch;
         ch = getch();
 
-        switch (edit_mode)
-        {
-        case MODE_EDIT:
-            if (ch == KEY_ESC)
-                edit_mode = MODE_COMMAND;
-            break;
+        // switch (edit_mode)
+        // {
+        // case MODE_EDIT:
+        //     if (ch == KEY_ESC)
+        //         edit_mode = MODE_COMMAND;
+        //     break;
 
-        case MODE_COMMAND:
-            if (ch == KEY_ESC)
-                edit_mode = MODE_EDIT;
-            break;
-        }
+        // case MODE_COMMAND:
+        //     if (ch == KEY_ESC)
+        //         edit_mode = MODE_EDIT;
+        //     break;
+        // }
 
         switch (edit_mode)
         {
@@ -75,9 +75,38 @@ int main(int argc, char **argv)
 
             switch (ch)
             {
+
+
+            case KEY_F(1):
+                // edit_mode = MODE_HELP;
+                break;
+
+            case KEY_F(2):
+                // edit_mode = MODE_FILES;
+                break;
+
+            case KEY_F(3):
+                // edit_mode = MODE_SEARCH;
+                break;
+
+            case KEY_F(4):
+                break;
+
+            case KEY_F(5):
+                editor.LoadFile(filename);
+                break;
+
+            case KEY_F(6):
+                editor.SaveFile(filename);
+                break;
+
             case KEY_F(12):
                 running = false;
                 break;
+
+
+
+
 
             case KEY_UP:
                 editor.MoveUp();
@@ -95,6 +124,8 @@ int main(int argc, char **argv)
                 editor.MoveRight();
                 break;
 
+
+
             case KEY_HOME:
                 editor.MoveToLineStart();
                 break;
@@ -102,6 +133,8 @@ int main(int argc, char **argv)
             case KEY_END:
                 editor.MoveToLineEnd();
                 break;
+
+
 
             case KEY_PPAGE:
                 editor.PreviousPage();
@@ -111,11 +144,15 @@ int main(int argc, char **argv)
                 editor.NextPage();
                 break;
 
+
+
             case '\n':
             case '\r':
             case KEY_ENTER:
                 editor.SplitLine();
                 break;
+
+
 
             case KEY_BACKSPACE:
                 editor.Backspace();
@@ -129,7 +166,9 @@ int main(int argc, char **argv)
                 editor.Delete();
                 break;
 
-            case KEY_RESIZE:
+
+
+            case KEY_RESIZE:        // fake key pressfrom ncurses to handle terminal resizes
                 getmaxyx(stdscr, screen_rows, screen_cols);
                 break;
 
@@ -150,7 +189,7 @@ int main(int argc, char **argv)
 
 
         //
-        // STATUS BAR AT THE BOTTOM OF THE SCREEN
+        // STATUS BAR AT THE TOP OF THE
         //
 
         move(screen_rows - 1, 0);
@@ -159,9 +198,9 @@ int main(int argc, char **argv)
         std::string status_line_text = "";
 
         if (edit_mode == MODE_EDIT)
-            status_line_text += " E ";
+            status_line_text += "-E-";
         else
-            status_line_text += " C ";
+            status_line_text += "-C-";
 
         status_line_text += " " + std::to_string(editor.cursor_y) + " " + std::to_string(editor.cursor_x);
         status_line_text += " / " + std::to_string(my_line_buffer.lines.size());
@@ -173,8 +212,6 @@ int main(int argc, char **argv)
 
         printw("%s", status_line.c_str());
         attroff(A_REVERSE);
-
-
 
 
         //
@@ -195,12 +232,8 @@ int main(int argc, char **argv)
         attroff(A_REVERSE | A_BLINK);
 
 
-
         refresh();
     }
     endwin();
-
-    std::cout << my_line_buffer.ToString();
-
     return 0;
 }
